@@ -2,6 +2,7 @@ import pygame
 import sys
 
 from pygame.locals import *
+from block import *
 
 class Player(pygame.sprite.Sprite):
 
@@ -41,6 +42,8 @@ class Player(pygame.sprite.Sprite):
 
         # Search for detected collisions
         for block in blocks:
+            pressed_keys = pygame.key.get_pressed()
+
             if self.rect.colliderect(block.rect):
                 if vel_x > 0:
                     self.rect.right = block.rect.left
@@ -54,6 +57,13 @@ class Player(pygame.sprite.Sprite):
                     self.rect.bottom = block.rect.top
                     self.on_land = True
                     self.vel_y = 0
+
+                    # Checks if the block is a spring
+                    if isinstance(block, Spring):
+                        if not pressed_keys[K_x]:
+                            self.vel_y = -10
+                        if pressed_keys[K_x]:
+                            self.vel_y = -18
                     
                 if vel_y < 0:
                     self.rect.top = block.rect.bottom

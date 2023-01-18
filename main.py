@@ -26,6 +26,7 @@ block_two = Block(320, 320-36, 24, 24)
 block_three = Block(320+48+72, 320-36-24-48, 24, 72)
 block_four = Block(320+48+72+72, 320-36-24-48-48, 24, 72+24)
 block_five = Block(320+48, 320-36-24-48-48, 96+48+24, 24)
+spring = Spring(48+24, 320-36, 24, 24)
 
 sprites = pygame.sprite.Group()
 sprites.add(player)
@@ -36,6 +37,7 @@ solid_sprites.add(block_two)
 solid_sprites.add(block_three)
 solid_sprites.add(block_four)
 solid_sprites.add(block_five)
+solid_sprites.add(spring)
 
 sprites.add(solid_sprites)
 
