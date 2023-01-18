@@ -9,8 +9,10 @@ pygame.init()
 # Set the initial conditions for the game
 window_width = 640
 window_height = 320
-game_is_running = True
+scroll_limit_width = window_width / 2
+scroll_limit_height = window_height / 2
 game_clock = pygame.time.Clock()
+game_is_running = True
 grid_size = 24
 fps = 60
  
@@ -46,6 +48,9 @@ while game_is_running:
 
 	displaysurface.fill((0,0,0))
 	player.move(solid_sprites)
+
+	player_coordinates = player.get_pos()
+	print(player_coordinates)
 
 	for sprite in sprites:
 		displaysurface.blit(sprite.surf, sprite.rect)

@@ -33,7 +33,7 @@ class Player(pygame.sprite.Sprite):
         self.walk_speed = 3
         self.run_speed = 6
         self.curr_speed = self.walk_speed
-        
+
     # Checks for collisions regarding solid objects
     def check_blocks(self, blocks, vel_x, vel_y):
         self.rect.x += vel_x
