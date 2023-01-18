@@ -49,11 +49,12 @@ while game_is_running:
 	displaysurface.fill((0,0,0))
 	player.move(solid_sprites)
 
-	player_coordinates = player.get_pos()
-	print(player_coordinates)
-
 	for sprite in sprites:
 		displaysurface.blit(sprite.surf, sprite.rect)
+
+	# print("Player X: ", player.rect.x)
+	# print("Player Y: ", player.rect.y)
+	# print("\n")
 
 	pygame.display.update()
 	game_clock.tick(fps)
