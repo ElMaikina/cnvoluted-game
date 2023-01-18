@@ -19,7 +19,7 @@ fps = 60
 displaysurface = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption("Cnvoluted")
 
-# Main player object and solid block
+# Main player object and solid block(s)
 player = Player(48, 200, 4, 24)
 block = Block(320, 320-12, 640, 24)
 block_two = Block(320, 320-36, 24, 24)
@@ -46,15 +46,24 @@ while game_is_running:
 			pygame.quit()
 			sys.exit()
 
+	# Draws the background color
 	displaysurface.fill((0,0,0))
+	
+	# Manages player position
 	player.move(solid_sprites)
 
+	# Sets the camera position
+	cam_x = player.rect.x 
+	cam_y = player.rect.y
+
+	# Draws all of the sprites in the stage
+	# Also applies offset to each of them, so they are drawn
+	# in correlation to the camera position
 	for sprite in sprites:
-		displaysurface.blit(sprite.surf, sprite.rect)
+		offset_x = sprite.rect.x - cam_x + scroll_limit_width
+		offset_y  = sprite.rect.y - cam_y + scroll_limit_height
+		displaysurface.blit(sprite.surf, (offset_x, offset_y))
 
-	# print("Player X: ", player.rect.x)
-	# print("Player Y: ", player.rect.y)
-	# print("\n")
-
+	# Redraws everything
 	pygame.display.update()
 	game_clock.tick(fps)
