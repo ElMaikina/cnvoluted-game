@@ -4,6 +4,20 @@ import sys
 from pygame.locals import *
 from block import *
 
+# Visible player sprite
+class PlayerSprite(pygame.sprite.Sprite):
+    
+    def __init__(self, x, y):
+        super().__init__()
+        self.sprites = []
+        self.sprites.append(pygame.image.load("sprites\kyle\kyle_idle.png"))
+        self.curr_spr = 0
+        self.image = self.sprites[self.curr_spr]
+
+        self.rect = self.image.get_rect()
+        self.rect.center = [x,y]
+
+# Character controller
 class Player(pygame.sprite.Sprite):
 
     # Player character initialization script
@@ -12,7 +26,6 @@ class Player(pygame.sprite.Sprite):
         
         # Creates a surface
         self.surf = pygame.Surface((4, 24))
-        self.surf.fill((128, 255, 40))
         self.rect = self.surf.get_rect()
 
         self.width = 4
@@ -34,6 +47,7 @@ class Player(pygame.sprite.Sprite):
         self.walk_speed = 3
         self.run_speed = 6
         self.curr_speed = self.walk_speed
+        self.curr_char = "kyle"
 
     # Checks for collisions regarding solid objects
     def check_blocks(self, blocks, others, vel_x, vel_y):

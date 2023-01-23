@@ -25,16 +25,18 @@ pygame.display.set_caption("Cnvoluted")
 sprites = pygame.sprite.Group()
 
 # Player type and X, Y coordinates
+playersprite = PlayerSprite(48, 160)
 player = Kyle(48, 160)
+#sprites.add(playersprite)
 sprites.add(player)
 
 # Solid block, X, Y coordinates, Width and Height
 solid_sprites = pygame.sprite.Group()
 
-solid = Block(320, 320-24, 640, 24)
+solid = Block(0, 320-24, 640, 24)
 solid_sprites.add(solid)
 
-solid = Block(160, 320-48, 48, 24)
+solid = Block(640, 320-48, 48, 24)
 solid_sprites.add(solid)
 
 sprites.add(solid_sprites)
@@ -63,11 +65,17 @@ while game_is_running:
 	cam_x = scroll_limit_width
 	cam_y = scroll_limit_height
 
+	# Sets the player position
+	player_x = player.rect.x
+	player_y = player.rect.y
+
 	if player.rect.x > scroll_limit_width and player.rect.x < level_width - scroll_limit_width:
 		cam_x = player.rect.x 
+		player_x = scroll_limit_width
 	
 	if player.rect.y > scroll_limit_height and player.rect.y < level_height - scroll_limit_height:
 		cam_y = player.rect.y
+		player_y = scroll_limit_height
 
 	# Draws all of the sprites in the stage
 	# Also applies offset to each of them, so they are drawn
@@ -76,6 +84,8 @@ while game_is_running:
 		offset_x = sprite.rect.x - cam_x + scroll_limit_width
 		offset_y  = sprite.rect.y - cam_y + scroll_limit_height
 		displaysurface.blit(sprite.surf, (offset_x, offset_y))
+	
+	displaysurface.blit(playersprite.image, (player_x - 12, player_y - 6))
 
 	# Redraws everything
 	pygame.display.update()

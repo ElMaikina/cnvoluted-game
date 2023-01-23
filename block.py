@@ -7,15 +7,15 @@ class Block(pygame.sprite.Sprite):
     # Solid block init script
     def __init__(self, x, y, width, height):
         super().__init__() 
-        self.x = x
-        self.y = y
+        self.x = x + (width / 2)
+        self.y = y + (height / 2)
 
         self.width = width
         self.height = height
 
         self.surf = pygame.Surface((width, height))
         self.surf.fill((255, 0, 0))
-        self.rect = self.surf.get_rect(center = (x, y))
+        self.rect = self.surf.get_rect(center = (self.x, self.y))
 
 # Solid object that makes the player bounce
 class Spring(Block):
