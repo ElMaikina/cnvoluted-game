@@ -25,9 +25,7 @@ class Spring(Block):
         super().__init__(x, y, width, height)
         self.surf.fill((0, 0, 255))
 
-# Semi-solid block, the player can pass through it if they
-# come from below, otherwise, if they come from above it
-# acts as a normal block
+# Semi-solid block the player can pass through
 class SemiSolid(pygame.sprite.Sprite):
     
     # Solid block init script
@@ -37,8 +35,8 @@ class SemiSolid(pygame.sprite.Sprite):
         self.y = y
 
         self.width = width
-        self.height = 4
+        self.height = 2
 
-        self.surf = pygame.Surface((width, 4))
+        self.surf = pygame.Surface((width, 2))
         self.surf.fill((255, 0, 0))
         self.rect = self.surf.get_rect(center = (x, y))

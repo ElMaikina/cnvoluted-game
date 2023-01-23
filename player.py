@@ -31,7 +31,6 @@ class Player(pygame.sprite.Sprite):
         self.can_jump = True
         self.max_vel_y = 12
         self.time_to_normal_state = 0
-
         self.walk_speed = 3
         self.run_speed = 6
         self.curr_speed = self.walk_speed
@@ -61,7 +60,7 @@ class Player(pygame.sprite.Sprite):
                     self.vel_y = 0
 
                     # Checks if the block is a spring
-                    if isinstance(block, Spring):
+                    if type(block) is Spring:
                         if not pressed_keys[K_x]:
                             self.vel_y = -10
                         if pressed_keys[K_x]:
@@ -78,7 +77,7 @@ class Player(pygame.sprite.Sprite):
             if self.rect.colliderect(other.rect):
                 if type(other) is SemiSolid:
                     if vel_y > 0:
-                        self.rect.bottom = other.rect.top
+                        self.rect.bottom = other.rect.bottom
                         self.on_land = True
                         self.vel_y = 0
 
@@ -96,7 +95,7 @@ class Player(pygame.sprite.Sprite):
                 self.is_facing_right = True
                 self.max_vel_y = 2
                 self.vel_y = 2
-
+    
             else:
                 self.max_vel_y = 12
 
@@ -178,7 +177,6 @@ class Player(pygame.sprite.Sprite):
         if self.time_to_normal_state == 0:
             self.in_control = True
 
-
     # Manages both collisions with solid objects and
     # other object that don't necesarily collide
     # (NPC's, slopes, items, etc.)
@@ -195,12 +193,15 @@ class Player(pygame.sprite.Sprite):
         self.return_to_normal()
         self.check_slide_on_wall()
 
-
 class Kyle(Player):
     
     # Player character initialization script
     def __init__(self, x, y):
         super().__init__(x, y)
+
+        self.is_sliding = False
+        self.slide_speed = 4
+        self.slide_time = 44
         self.super_speed = 12
         self.is_super = 0
 
@@ -216,9 +217,41 @@ class Kyle(Player):
                 if self.run_speed < self.super_speed:
                     self.run_speed += 1
             
-            if not  pressed_keys[K_LSHIFT]:
+            if not pressed_keys[K_LSHIFT]:
                 self.walk_speed = 3
                 self.run_speed = 6
+
+    def super_slide(self):
+        pressed_keys = pygame.key.get_pressed()
+        
+        # If the key combination is pressed
+        # start sliding
+        if self.in_control and self.jump_on_land:
+            if pressed_keys[K_DOWN] and pressed_keys[K_c]:
+                
+                self.in_control = False
+                self.is_sliding = True
+        
+        # Behaviour while sliding
+        if self.is_sliding:
+
+            # If the keys are released
+            # return to normal state
+            if not pressed_keys[K_c]:
+                self.time_to_normal_state = self.slide_time
+                self.in_control = False
+                self.is_sliding = False
+                self.vel_x = 0
+                return
+
+            # Apply the slide speed
+            if self.is_facing_right:
+                self.vel_x = self.slide_speed
+
+            if not self.is_facing_right:
+                self.vel_x = -self.slide_speed
+
+
 
     def move(self, blocks, others):
         self.on_land = False
@@ -233,3 +266,4 @@ class Kyle(Player):
         self.return_to_normal()
         self.check_slide_on_wall()
         self.super_run()
+        self.super_slide()

@@ -16,39 +16,35 @@ game_clock = pygame.time.Clock()
 game_is_running = True
 grid_size = 24
 fps = 60
- 
+
+# Window settings 
 displaysurface = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption("Cnvoluted")
 
 # Main player object and solid block(s)
-player = Kyle(48, 200)
-block = Block(320, 320-12, 640, 24)
-block_two = Block(320, 320-36, 24, 24)
-block_three = Block(320+48+72, 320-36-24-48, 24, 72)
-block_four = Block(320+48+72+72, 320-36-24-48-48, 24, 72+24)
-block_five = Block(320+48, 320-36-24-48-48, 96+48+24, 24)
-spring = Spring(48+24, 320-36, 24, 24)
-step = SemiSolid(48+24+48, 320-36-36, 24)
-
-
 sprites = pygame.sprite.Group()
+
+# Player type and X, Y coordinates
+player = Kyle(48, 160)
 sprites.add(player)
 
-other_sprites = pygame.sprite.Group()
-other_sprites.add(step)
-
+# Solid block, X, Y coordinates, Width and Height
 solid_sprites = pygame.sprite.Group()
-solid_sprites.add(block)
-solid_sprites.add(block_two)
-solid_sprites.add(block_three)
-solid_sprites.add(block_four)
-solid_sprites.add(block_five)
-solid_sprites.add(spring)
+
+solid = Block(320, 320-24, 640, 24)
+solid_sprites.add(solid)
+
+solid = Block(160, 320-48, 48, 24)
+solid_sprites.add(solid)
 
 sprites.add(solid_sprites)
-sprites.add(other_sprites)
 
+# Other types of sprites
+other_sprites = pygame.sprite.Group()
 
+# Level settings
+level_width = 1200
+level_height = 320
 
 # General game loop
 while game_is_running:
@@ -64,8 +60,14 @@ while game_is_running:
 	player.move(solid_sprites, other_sprites)
 
 	# Sets the camera position
-	cam_x = player.rect.x 
-	cam_y = player.rect.y
+	cam_x = scroll_limit_width
+	cam_y = scroll_limit_height
+
+	if player.rect.x > scroll_limit_width and player.rect.x < level_width - scroll_limit_width:
+		cam_x = player.rect.x 
+	
+	if player.rect.y > scroll_limit_height and player.rect.y < level_height - scroll_limit_height:
+		cam_y = player.rect.y
 
 	# Draws all of the sprites in the stage
 	# Also applies offset to each of them, so they are drawn
