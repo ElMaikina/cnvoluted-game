@@ -4,38 +4,24 @@ import sys
 from pygame.locals import *
 from block import *
 
-# Visible player sprite
-class PlayerSprite(pygame.sprite.Sprite):
-    
-    def __init__(self, x, y):
-        super().__init__()
-        self.sprites = []
-        self.sprites.append(pygame.image.load("sprites\kyle\kyle_idle.png"))
-        self.curr_spr = 0
-        self.image = self.sprites[self.curr_spr]
-
-        self.rect = self.image.get_rect()
-        self.rect.center = [x,y]
-
 # Character controller
-class Player(pygame.sprite.Sprite):
+class PlayerController(pygame.sprite.Sprite):
 
     # Player character initialization script
     def __init__(self, x, y):
         super().__init__() 
         
-        # Creates a surface
+        # Variables related to postion and hitbox
         self.surf = pygame.Surface((4, 24))
         self.rect = self.surf.get_rect()
-
         self.width = 4
         self.height = 24
-
         self.rect.x = x
         self.rect.y = y
         self.vel_x = 0
         self.vel_y = 0
 
+        # Variables related to movement
         self.is_facing_right = True
         self.on_land = False
         self.on_left_wall = False
@@ -47,7 +33,7 @@ class Player(pygame.sprite.Sprite):
         self.walk_speed = 3
         self.run_speed = 6
         self.curr_speed = self.walk_speed
-        self.curr_char = "kyle"
+        self.action = "idle"
 
     # Checks for collisions regarding solid objects
     def check_blocks(self, blocks, others, vel_x, vel_y):
@@ -104,11 +90,13 @@ class Player(pygame.sprite.Sprite):
                 self.is_facing_right = False
                 self.max_vel_y = 2
                 self.vel_y = 2
+                self.action = "wall"
                 
             if self.on_left_wall and pressed_keys[K_LEFT]:
                 self.is_facing_right = True
                 self.max_vel_y = 2
                 self.vel_y = 2
+                self.action = "wall"
     
             else:
                 self.max_vel_y = 12
@@ -134,6 +122,25 @@ class Player(pygame.sprite.Sprite):
 
             if not pressed_keys[K_LEFT] and not pressed_keys[K_RIGHT]:
                 self.vel_x = 0 # Standing still
+
+            # Define the animations
+            if self.on_land:
+                if self.vel_x == 0:
+                    self.action = "idle"
+
+                if self.vel_x != 0:
+                    if self.curr_speed == self.walk_speed:
+                        self.action = "walk"
+
+                    if self.curr_speed == self.run_speed:
+                        self.action = "run"
+            
+            if not self.on_land:
+                if self.vel_y <= 3:
+                    self.action = "jump"
+
+                if self.vel_y > 3:
+                    self.action = "fall"
 
     # Applies gravity to player
     def apply_gravity(self):
@@ -169,6 +176,7 @@ class Player(pygame.sprite.Sprite):
                     self.in_control = False
                     self.is_facing_right = True
                     self.time_to_normal_state = 9
+                    self.action = "wljmp"
 
                 if self.on_right_wall and self.can_jump:
                     self.vel_y = -10
@@ -177,6 +185,7 @@ class Player(pygame.sprite.Sprite):
                     self.in_control = False
                     self.is_facing_right = False
                     self.time_to_normal_state = 9
+                    self.action = "wljmp"
 
         if not pressed_keys[K_x]:
             self.can_jump = True
@@ -206,78 +215,3 @@ class Player(pygame.sprite.Sprite):
         self.jump_on_wall()
         self.return_to_normal()
         self.check_slide_on_wall()
-
-class Kyle(Player):
-    
-    # Player character initialization script
-    def __init__(self, x, y):
-        super().__init__(x, y)
-
-        self.is_sliding = False
-        self.slide_speed = 4
-        self.slide_time = 44
-        self.super_speed = 12
-        self.is_super = 0
-
-    def super_run(self):
-        pressed_keys = pygame.key.get_pressed()
-        
-        if self.in_control:
-            if pressed_keys[K_LSHIFT]:
-
-                if self.walk_speed < self.super_speed:
-                    self.walk_speed += 1
-                
-                if self.run_speed < self.super_speed:
-                    self.run_speed += 1
-            
-            if not pressed_keys[K_LSHIFT]:
-                self.walk_speed = 3
-                self.run_speed = 6
-
-    def super_slide(self):
-        pressed_keys = pygame.key.get_pressed()
-        
-        # If the key combination is pressed
-        # start sliding
-        if self.in_control and self.jump_on_land:
-            if pressed_keys[K_DOWN] and pressed_keys[K_c]:
-                
-                self.in_control = False
-                self.is_sliding = True
-        
-        # Behaviour while sliding
-        if self.is_sliding:
-
-            # If the keys are released
-            # return to normal state
-            if not pressed_keys[K_c]:
-                self.time_to_normal_state = self.slide_time
-                self.in_control = False
-                self.is_sliding = False
-                self.vel_x = 0
-                return
-
-            # Apply the slide speed
-            if self.is_facing_right:
-                self.vel_x = self.slide_speed
-
-            if not self.is_facing_right:
-                self.vel_x = -self.slide_speed
-
-
-
-    def move(self, blocks, others):
-        self.on_land = False
-        self.on_left_wall = False
-        self.on_right_wall = False
-        self.apply_gravity()
-        self.check_blocks(blocks, others, self.vel_x, 0)
-        self.check_blocks(blocks, others, 0, self.vel_y)
-        self.run_or_walk()
-        self.jump_on_land()
-        self.jump_on_wall()
-        self.return_to_normal()
-        self.check_slide_on_wall()
-        self.super_run()
-        self.super_slide()

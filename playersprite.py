@@ -1,0 +1,105 @@
+import pygame
+import sys
+
+from pygame.locals import *
+from playercontroller import *
+from kyle import *
+from block import *
+
+# Draws the Player sprite
+class PlayerSprite(pygame.sprite.Sprite):
+    
+    # Loads all the sprites into memory
+    def __init__(self, player, x, y):
+        super().__init__()
+        self.sprites = []
+
+        # Loads sprites depending on character type
+        if type(player) is Kyle:
+            self.sprites.append(pygame.image.load("sprites\kyle\idle\\0.png"))
+
+            self.sprites.append(pygame.image.load("sprites\kyle\walk\\0.png"))
+            self.sprites.append(pygame.image.load("sprites\kyle\walk\\1.png"))
+            self.sprites.append(pygame.image.load("sprites\kyle\walk\\2.png"))
+            self.sprites.append(pygame.image.load("sprites\kyle\walk\\3.png"))
+            self.sprites.append(pygame.image.load("sprites\kyle\walk\\4.png"))
+            self.sprites.append(pygame.image.load("sprites\kyle\walk\\5.png"))
+
+            self.sprites.append(pygame.image.load("sprites\kyle\\run\\0.png"))
+            self.sprites.append(pygame.image.load("sprites\kyle\\run\\1.png"))
+            self.sprites.append(pygame.image.load("sprites\kyle\\run\\2.png"))
+            self.sprites.append(pygame.image.load("sprites\kyle\\run\\3.png"))
+            
+            self.sprites.append(pygame.image.load("sprites\kyle\jump\\0.png"))
+            
+            self.sprites.append(pygame.image.load("sprites\kyle\\fall\\0.png"))
+            
+            self.sprites.append(pygame.image.load("sprites\kyle\wall\\0.png"))
+            
+            self.sprites.append(pygame.image.load("sprites\kyle\wljmp\\0.png"))
+
+        self.frame = 0
+        self.image = self.sprites[self.frame]
+        self.rect = self.image.get_rect()
+        self.rect.center = [x,y]
+
+    # Draws the specific sprite on-screen
+    def animate(self, player, x, y):
+        action = player.action
+        start = 0
+        end = 0
+
+        if action == "idle":
+            start = 0
+            end = 0
+            self.frame = 0
+
+        if action == "walk":
+            start = 1
+            end = 7
+            if self.frame > end:
+                self.frame = start
+
+        if action == "run":
+            start = 7
+            end = 11
+            if self.frame > end:
+                self.frame = start
+
+        if action == "jump":
+            start = 11
+            end = 11
+            self.frame = 11
+        
+        if action == "fall":
+            start = 12
+            end = 12
+            self.frame = 12
+        
+        if action == "wall":
+            start = 13
+            end = 13
+            self.frame = 13
+        
+        if action == "wljmp":
+            start = 14
+            end = 14
+            self.frame = 14
+
+        if self.frame > end:
+            self.frame = start
+
+        if player.is_facing_right:
+            self.image = self.sprites[int(self.frame)]
+            self.rect = self.image.get_rect()
+            self.rect.center = [x,y]
+
+        if not player.is_facing_right:
+            self.image = self.sprites[int(self.frame)]
+            self.image = pygame.transform.flip(self.image, True, False)
+            self.rect = self.image.get_rect()
+            self.rect.center = [x,y]
+
+        self.frame += 0.225
+
+        #print("pose: ", player.curr_action)

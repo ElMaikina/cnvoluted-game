@@ -1,7 +1,9 @@
 import pygame
 import sys
 
-from player import *
+from playercontroller import *
+from playersprite import *
+from kyle import *
 from block import *
 
 pygame.init()
@@ -25,15 +27,23 @@ pygame.display.set_caption("Cnvoluted")
 sprites = pygame.sprite.Group()
 
 # Player type and X, Y coordinates
-playersprite = PlayerSprite(48, 160)
 player = Kyle(48, 160)
-#sprites.add(playersprite)
+playersprite = PlayerSprite(player, 48, 160)
 sprites.add(player)
 
 # Solid block, X, Y coordinates, Width and Height
 solid_sprites = pygame.sprite.Group()
 
 solid = Block(0, 320-24, 640, 24)
+solid_sprites.add(solid)
+
+solid = Block(320+48+24+48, 320-24, 640, 24)
+solid_sprites.add(solid)
+
+solid = Block(320, 320-48-24-120, 24, 120)
+solid_sprites.add(solid)
+
+solid = Block(320+48+24, 320-48-24-120+32, 24, 120)
 solid_sprites.add(solid)
 
 solid = Block(640, 320-48, 48, 24)
@@ -66,6 +76,7 @@ while game_is_running:
 	cam_y = scroll_limit_height
 
 	# Sets the player position
+	# relative to screen
 	player_x = player.rect.x
 	player_y = player.rect.y
 
@@ -85,6 +96,7 @@ while game_is_running:
 		offset_y  = sprite.rect.y - cam_y + scroll_limit_height
 		displaysurface.blit(sprite.surf, (offset_x, offset_y))
 	
+	playersprite.animate(player, player_x - 12, player_y - 6)
 	displaysurface.blit(playersprite.image, (player_x - 12, player_y - 6))
 
 	# Redraws everything
