@@ -88,6 +88,9 @@ class PlayerSprite(pygame.sprite.Sprite):
 
         if self.frame > end:
             self.frame = start
+        
+        if self.frame < start:
+            self.frame = start
 
         if player.is_facing_right:
             self.image = self.sprites[int(self.frame)]
@@ -101,5 +104,3 @@ class PlayerSprite(pygame.sprite.Sprite):
             self.rect.center = [x,y]
 
         self.frame += 0.225
-
-        #print("pose: ", player.curr_action)

@@ -20,6 +20,7 @@ grid_size = 24
 fps = 60
 
 # Window settings 
+#displaysurface = pygame.display.set_mode((window_width, window_height), pygame.FULLSCREEN)
 displaysurface = pygame.display.set_mode((window_width, window_height))
 pygame.display.set_caption("Cnvoluted")
 
@@ -72,32 +73,17 @@ while game_is_running:
 	player.move(solid_sprites, other_sprites)
 
 	# Sets the camera position
-	cam_x = scroll_limit_width
-	cam_y = scroll_limit_height
-
-	# Sets the player position
-	# relative to screen
-	player_x = player.rect.x
-	player_y = player.rect.y
-
-	if player.rect.x > scroll_limit_width and player.rect.x < level_width - scroll_limit_width:
-		cam_x = player.rect.x 
-		player_x = scroll_limit_width
-	
-	if player.rect.y > scroll_limit_height and player.rect.y < level_height - scroll_limit_height:
-		cam_y = player.rect.y
-		player_y = scroll_limit_height
+	cam_x = player.rect.x - scroll_limit_width
+	cam_y = player.rect.y - scroll_limit_height
 
 	# Draws all of the sprites in the stage
-	# Also applies offset to each of them, so they are drawn
-	# in correlation to the camera position
 	for sprite in sprites:
-		offset_x = sprite.rect.x - cam_x + scroll_limit_width
-		offset_y  = sprite.rect.y - cam_y + scroll_limit_height
-		displaysurface.blit(sprite.surf, (offset_x, offset_y))
+		x = sprite.rect.x - cam_x
+		y  = sprite.rect.y - cam_y
+		displaysurface.blit(sprite.surf, (x, y))
 	
-	playersprite.animate(player, player_x - 12, player_y - 6)
-	displaysurface.blit(playersprite.image, (player_x - 12, player_y - 6))
+	playersprite.animate(player, 320-12, 160-6)
+	displaysurface.blit(playersprite.image, (320-12, 160-6))
 
 	# Redraws everything
 	pygame.display.update()
