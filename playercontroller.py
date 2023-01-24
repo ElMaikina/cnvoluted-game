@@ -24,6 +24,7 @@ class PlayerController(pygame.sprite.Sprite):
         # Variables related to movement
         self.is_facing_right = True
         self.on_land = False
+        self.on_ice = False
         self.on_left_wall = False
         self.on_right_wall = False
         self.in_control = True
@@ -66,6 +67,14 @@ class PlayerController(pygame.sprite.Sprite):
                         if pressed_keys[K_x]:
                             self.vel_y = -18
                     
+                    # Checks if the surface is ice
+                    if type(block) is Ice:
+                        self.on_ice = True
+                        
+                    # Checks if the surface is ice
+                    if type(block) is not Ice:
+                        self.on_ice = False
+
                 if vel_y < 0:
                     self.rect.top = block.rect.bottom
                     self.vel_y = 0
@@ -106,22 +115,45 @@ class PlayerController(pygame.sprite.Sprite):
         pressed_keys = pygame.key.get_pressed()
         
         if self.in_control:
+
             if not pressed_keys[K_z]:
                 self.curr_speed = self.walk_speed # Walking
 
             if pressed_keys[K_z]:
                 self.curr_speed = self.run_speed # Running
 
-            if pressed_keys[K_LEFT]:
-                self.vel_x = -self.curr_speed # Left
-                self.is_facing_right = False
+            if not self.on_ice:
+                if pressed_keys[K_LEFT]:
+                    self.vel_x = -self.curr_speed # Left
+                    self.is_facing_right = False
 
-            if pressed_keys[K_RIGHT]:
-                self.vel_x = self.curr_speed # Right
-                self.is_facing_right = True
+                if pressed_keys[K_RIGHT]:
+                    self.vel_x = self.curr_speed # Right
+                    self.is_facing_right = True
 
-            if not pressed_keys[K_LEFT] and not pressed_keys[K_RIGHT]:
-                self.vel_x = 0 # Standing still
+                if not pressed_keys[K_LEFT] and not pressed_keys[K_RIGHT]:
+                    self.vel_x = 0 # Standing still
+            
+            if self.on_ice:
+                if pressed_keys[K_LEFT]:
+                    if self.vel_x > -self.curr_speed:
+                        self.vel_x -= 0.1 # Left
+                    self.is_facing_right = False
+
+                if pressed_keys[K_RIGHT]:
+                    if self.vel_x < self.curr_speed:
+                        self.vel_x += 0.1 # Right
+                    self.is_facing_right = True
+
+                if not pressed_keys[K_LEFT] and not pressed_keys[K_RIGHT]:
+                    if abs(self.vel_x) < 1:
+                       self.vel_x = 0
+
+                    if self.vel_x > 0:
+                        self.vel_x -= self.curr_speed / 5
+
+                    if self.vel_x < 0:
+                        self.vel_x += self.curr_speed / 5
 
             # Define the animations
             if self.on_land:
@@ -158,6 +190,7 @@ class PlayerController(pygame.sprite.Sprite):
             if pressed_keys[K_x] and self.can_jump:
                 self.vel_y = -12
                 self.can_jump = False
+                self.on_ice = False
 
         if not pressed_keys[K_x]:
             self.can_jump = True
@@ -172,6 +205,7 @@ class PlayerController(pygame.sprite.Sprite):
                 if self.on_left_wall and self.can_jump:
                     self.vel_y = -10
                     self.vel_x = 5
+                    self.on_ice = False
                     self.can_jump = False
                     self.in_control = False
                     self.is_facing_right = True
@@ -181,6 +215,7 @@ class PlayerController(pygame.sprite.Sprite):
                 if self.on_right_wall and self.can_jump:
                     self.vel_y = -10
                     self.vel_x = -5
+                    self.on_ice = False
                     self.can_jump = False
                     self.in_control = False
                     self.is_facing_right = False
@@ -205,6 +240,7 @@ class PlayerController(pygame.sprite.Sprite):
     # (NPC's, slopes, items, etc.)
     def move(self, blocks, others):
         self.on_land = False
+        self.on_ice = False
         self.on_left_wall = False
         self.on_right_wall = False
         self.apply_gravity()

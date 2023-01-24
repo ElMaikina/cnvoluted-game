@@ -23,7 +23,7 @@ class Kyle(PlayerController):
     def super_run(self):
         pressed_keys = pygame.key.get_pressed()
         
-        if self.in_control:
+        if self.in_control and self.on_land:
             if pressed_keys[K_LSHIFT]:
 
                 if self.walk_speed < self.super_speed:
@@ -52,11 +52,12 @@ class Kyle(PlayerController):
         # Behaviour while sliding
         if self.is_sliding:
 
-            if self.is_facing_right:
-                self.vel_x = self.slide_speed
+            if not self.on_ice:
+                if self.is_facing_right:
+                    self.vel_x = self.slide_speed
 
-            if not self.is_facing_right:
-                self.vel_x = -self.slide_speed
+                if not self.is_facing_right:
+                    self.vel_x = -self.slide_speed
 
             if not pressed_keys[K_c]:
                 self.time_to_normal_state = self.slide_time
@@ -66,16 +67,6 @@ class Kyle(PlayerController):
                 return
 
     def move(self, blocks, others):
-        self.on_land = False
-        self.on_left_wall = False
-        self.on_right_wall = False
-        self.apply_gravity()
-        self.check_blocks(blocks, others, self.vel_x, 0)
-        self.check_blocks(blocks, others, 0, self.vel_y)
-        self.run_or_walk()
-        self.jump_on_land()
-        self.jump_on_wall()
-        self.return_to_normal()
-        self.check_slide_on_wall()
+        super().move(blocks, others)
         self.super_run()
-        self.super_slide()  
+        #self.super_slide()  

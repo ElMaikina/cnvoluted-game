@@ -13,6 +13,8 @@ class PlayerSprite(pygame.sprite.Sprite):
     def __init__(self, player, x, y):
         super().__init__()
         self.sprites = []
+        self.offx = 0
+        self.offy = 0
 
         # Loads sprites depending on character type
         if type(player) is Kyle:
@@ -48,42 +50,64 @@ class PlayerSprite(pygame.sprite.Sprite):
         action = player.action
         start = 0
         end = 0
+        self.offx = 0
+        self.offy = 0
 
         if action == "idle":
             start = 0
             end = 0
             self.frame = 0
-
+            self.offx = 1
+            self.offy = 0
+        
         if action == "walk":
             start = 1
             end = 7
+            self.offx = 1
+            self.offy = 0
+        
             if self.frame > end:
                 self.frame = start
 
         if action == "run":
             start = 7
             end = 11
+            self.offx = 2
+            self.offy = 0
+
             if self.frame > end:
                 self.frame = start
 
         if action == "jump":
             start = 11
             end = 11
+            self.offx = 1
+            self.offy = 0
+        
             self.frame = 11
         
         if action == "fall":
             start = 12
             end = 12
+            self.offx = 1
+            self.offy = 0
+
             self.frame = 12
         
         if action == "wall":
             start = 13
             end = 13
+            self.offx = 8
+            self.offy = 0
+
             self.frame = 13
         
         if action == "wljmp":
             start = 14
             end = 14
+            self.offx = 8
+            self.offy = 0
+
             self.frame = 14
 
         if self.frame > end:
@@ -102,5 +126,7 @@ class PlayerSprite(pygame.sprite.Sprite):
             self.image = pygame.transform.flip(self.image, True, False)
             self.rect = self.image.get_rect()
             self.rect.center = [x,y]
+            self.offx *= -1
+            self.offx += 2
 
         self.frame += 0.225
