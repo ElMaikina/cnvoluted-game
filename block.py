@@ -53,17 +53,31 @@ class Ice(Solid):
 class MovingSolid(Solid):
 
     # Uses the same init function as a block
-    def __init__(self, x, y, xdest, ydest, vx, vy, width, height, time):
+    def __init__(self, x, y, xdest, ydest, width, height, time, speed, xovery):
         super().__init__(x, y, width, height)
         self.xinit = (x * 24) #+ (self.width / 2)
         self.yinit = (y * 24) #+ (self.height / 2)
         self.xdest = (xdest * 24) #+ (self.width / 2)
         self.ydest = (ydest * 24) #+ (self.height / 2)
 
-        self.vxinit = vx
-        self.vyinit = vy
-        self.vx = vx
-        self.vy = vy
+        self.xovery = xovery
+        self.vxinit = 0
+        self.vyinit = 0
+        self.vx = 0
+        self.vy = 0
+
+        if xovery:
+            self.vxinit = speed
+
+        if not xovery:
+            self.vyinit = speed
+
+        if xovery:
+            self.vx = speed
+
+        if not xovery:
+            self.vy = speed
+
         self.resting = False
         self.rest_time = time
         self.rest_to_move = 0
@@ -74,8 +88,7 @@ class MovingSolid(Solid):
                 self.rect.x += self.vx
                 self.rect.y += self.vy
 
-                if self.xinit < self.xdest:
-                
+                if self.xovery:
                     if self.rect.x == self.xdest:
                         self.vx = -self.vxinit
                         self.resting = True
@@ -85,6 +98,18 @@ class MovingSolid(Solid):
                         self.vx = self.vxinit
                         self.resting = True
                         self.rest_to_move = self.rest_time
+
+                if not self.xovery:
+                    if self.rect.y == self.ydest:
+                        self.vy = -self.vyinit
+                        self.resting = True
+                        self.rest_to_move = self.rest_time
+
+                    if self.rect.y == self.yinit:
+                        self.vy = self.vyinit
+                        self.resting = True
+                        self.rest_to_move = self.rest_time
+
 
             if self.resting:
                 self.rest_to_move -= 1

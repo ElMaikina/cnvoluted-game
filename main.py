@@ -26,7 +26,7 @@ pygame.display.set_caption("Cnvoluted")
 sprites = pygame.sprite.Group()
 
 # Player Controller and Sprite
-plyrctrl = Kyle(0, 0, 1000)
+plyrctrl = Kyle(70, -5, 1000)
 plyrspr = PlayerSprite(plyrctrl, 0, 0)
 sprites.add(plyrctrl)
 
@@ -44,6 +44,9 @@ solid = Solid(-5, 5, 40, 1)
 solid_sprites.add(solid)
 
 solid = Ice(35, 5, 40, 1)
+solid_sprites.add(solid)
+
+solid = Solid(80, 5, 20, 1)
 solid_sprites.add(solid)
 
 solid = Solid(10, -2, 1, 5)
@@ -79,11 +82,26 @@ solid_sprites.add(solid)
 solid = Solid(55, 0, 4, 1)
 solid_sprites.add(solid)
 
-solid = Solid(75, -9, 1, 15)
+solid = Solid(75, -5, 5, 11)
 solid_sprites.add(solid)
 
-solid = MovingSolid(-5, 0, 9, 0, 4, 0, 1, 5, 20)
+solid = MovingSolid(59, -3, 65, -3, 4, 1, 20, 4, True)
 moving_solid_sprites.add(solid)
+
+solid = MovingSolid(70, 0, 70, -5, 5, 1, 30, -1, False)
+moving_solid_sprites.add(solid)
+
+solid = MovingSolid(80, -5, 80, 7, 5, 1, 30, 3, False)
+moving_solid_sprites.add(solid)
+
+solid = MovingSolid(59, -2, 69, -2, 1, 7, 20, 2, True)
+moving_solid_sprites.add(solid)
+
+solid = Solid(85, 0, 5, 3)
+solid_sprites.add(solid)
+
+solid = Solid(92, -2, 5, 5)
+solid_sprites.add(solid)
 
 
 solid_sprites.add(moving_solid_sprites)
