@@ -8,20 +8,20 @@ from block import *
 class PlayerController(pygame.sprite.Sprite):
 
     # Player character initialization script
-    def __init__(self, x, y):
+    def __init__(self, x, y, lvl):
         super().__init__() 
         
         # Variables related to postion and hitbox
-        self.surf = pygame.Surface((4, 24))
-        self.rect = self.surf.get_rect()
         self.width = 4
         self.height = 24
-        self.rect.x = x
-        self.rect.y = y
+        self.x = (x * 24) + (self.width / 2)
+        self.y = (y * 24) + (self.height / 2)
+        self.surf = pygame.Surface((self.width, self.height))
+        self.rect = self.surf.get_rect(center = (self.x, self.y))
+        
+        # Variables related to movement
         self.vel_x = 0
         self.vel_y = 0
-
-        # Variables related to movement
         self.is_facing_right = True
         self.on_land = False
         self.on_ice = False
@@ -35,6 +35,8 @@ class PlayerController(pygame.sprite.Sprite):
         self.run_speed = 6
         self.curr_speed = self.walk_speed
         self.action = "idle"
+        self.lvl = lvl
+        self.time_frozen = False
 
     # Checks for collisions regarding solid objects
     def check_blocks(self, blocks, others, vel_x, vel_y):
@@ -46,7 +48,7 @@ class PlayerController(pygame.sprite.Sprite):
         # Search for detected collisions
         for block in blocks:
 
-            if self.rect.colliderect(block.rect):
+            if self.rect.colliderect(block.rect) and type(block) != MovingSolid:
                 if vel_x > 0:
                     self.rect.right = block.rect.left
                     self.on_right_wall = True
@@ -59,7 +61,7 @@ class PlayerController(pygame.sprite.Sprite):
                     self.rect.bottom = block.rect.top
                     self.on_land = True
                     self.vel_y = 0
-
+                    
                     # Checks if the block is a spring
                     if type(block) is Spring:
                         if not pressed_keys[K_x]:
@@ -74,11 +76,41 @@ class PlayerController(pygame.sprite.Sprite):
                     # Checks if the surface is ice
                     if type(block) is not Ice:
                         self.on_ice = False
-
+                    
                 if vel_y < 0:
                     self.rect.top = block.rect.bottom
                     self.vel_y = 0
 
+            if self.rect.colliderect(block.rect) and type(block) == MovingSolid:
+                top = block.rect.centery - block.rect.height / 2
+                bottom = block.rect.centery + block.rect.height / 2
+                over = False
+                under = False
+
+                if not block.resting and not self.time_frozen:
+                    self.rect.x += block.vx
+                
+                if self.vel_y > 0 and self.rect.centery < top:
+                    self.rect.bottom = block.rect.top
+                    self.on_land = True
+                    self.vel_y = 0
+                    over = True
+                
+                if self.vel_y < 0 and self.rect.centery > bottom:
+                    self.rect.top = block.rect.bottom
+                    self.on_land = True
+                    self.vel_y = 0
+                    under = True
+                
+                if not over and not under:
+                    if self.vel_x > 0:
+                        self.rect.right = block.rect.left
+                        self.on_right_wall = True
+                    
+                    if self.vel_x < 0:
+                        self.rect.left = block.rect.right
+                        self.on_left_wall = True
+            
         # Search for special collisions
         for other in others:
 
@@ -150,10 +182,10 @@ class PlayerController(pygame.sprite.Sprite):
                        self.vel_x = 0
 
                     if self.vel_x > 0:
-                        self.vel_x -= self.curr_speed / 5
+                        self.vel_x -= 0.1
 
                     if self.vel_x < 0:
-                        self.vel_x += self.curr_speed / 5
+                        self.vel_x += 0.1
 
             # Define the animations
             if self.on_land:
