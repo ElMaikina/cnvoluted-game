@@ -86,10 +86,10 @@ class PlayerController(pygame.sprite.Sprite):
             if self.rect.colliderect(block.rect) and type(block) == MovingSolid:
                 top = block.rect.top + 6 # Applied offset to make it less strict
                 bottom = block.rect.bottom - 6
-                over = False 
+                over = False
                 under = False
 
-                if self.vel_y > 4 and self.rect.centery < top:
+                if self.vel_y > 0 and self.rect.centery < top:
                     self.rect.bottom = block.rect.top
                     self.on_land = True
                     over = True
@@ -98,7 +98,7 @@ class PlayerController(pygame.sprite.Sprite):
                         self.rect.x += block.vx
                         self.rect.y += block.vy
                 
-                if self.vel_y < -4 and self.rect.centery > bottom:
+                if self.vel_y < 0 and self.rect.centery > bottom:
                     self.rect.top = block.rect.bottom
                     under = True
                 
@@ -108,20 +108,38 @@ class PlayerController(pygame.sprite.Sprite):
                 
                 if not over and not under:
                     if self.vel_x > 0:
-                        self.rect.right = block.rect.left
                         self.on_right_wall = True
+
+                        if not self.on_land:
+                            self.rect.right = block.rect.left
 
                         if not block.resting and not self.time_frozen:
                             self.rect.x += block.vx
                             self.rect.y += block.vy
                     
                     if self.vel_x < 0:
-                        self.rect.left = block.rect.right
                         self.on_left_wall = True
+                        
+                        if not self.on_land:
+                            self.rect.left = block.rect.right
                         
                         if not block.resting and not self.time_frozen:
                             self.rect.x += block.vx
                             self.rect.y += block.vy
+                    
+                    if self.vel_x == 0:
+                        
+                        if not block.resting and not self.time_frozen:
+                            self.rect.x += block.vx
+                            self.rect.y += block.vy
+                    
+                        if self.rect.x < block.rect.centerx:
+                            self.rect.right = block.rect.left
+                            self.vel_x = 0
+                        
+                        if self.rect.x > block.rect.centerx:
+                            self.rect.left = block.rect.right
+                            self.vel_x = 0
             
         # Search for special collisions
         for other in others:

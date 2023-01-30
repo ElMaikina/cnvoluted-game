@@ -26,7 +26,7 @@ pygame.display.set_caption("Cnvoluted")
 sprites = pygame.sprite.Group()
 
 # Player Controller and Sprite
-plyrctrl = Kyle(70, -5, 1000)
+plyrctrl = Kyle(0, -5, 1)
 plyrspr = PlayerSprite(plyrctrl, 0, 0)
 sprites.add(plyrctrl)
 
@@ -43,10 +43,13 @@ solid_sprites.add(solid)
 solid = Solid(-5, 5, 40, 1)
 solid_sprites.add(solid)
 
-solid = Ice(35, 5, 40, 1)
+solid = Solid(35, 5, 40, 1)
 solid_sprites.add(solid)
 
 solid = Solid(80, 5, 20, 1)
+solid_sprites.add(solid)
+
+solid = Ice(100, 5, 20, 1)
 solid_sprites.add(solid)
 
 solid = Solid(10, -2, 1, 5)
@@ -91,7 +94,7 @@ moving_solid_sprites.add(solid)
 solid = MovingSolid(70, 0, 70, -5, 5, 1, 30, -1, False)
 moving_solid_sprites.add(solid)
 
-solid = MovingSolid(80, -5, 80, 7, 5, 1, 30, 3, False)
+solid = MovingSolid(80, -5, 80, 4, 5, 1, 30, 3, False)
 moving_solid_sprites.add(solid)
 
 solid = MovingSolid(59, -2, 69, -2, 1, 7, 20, 2, True)
@@ -112,11 +115,17 @@ sprites.add(other_sprites)
 # General game loop
 while game_is_running:
 
+	pressed_keys = pygame.key.get_pressed()
+
 	# See if the window has closed
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			pygame.quit()
 			sys.exit()
+
+	if pressed_keys[K_ESCAPE]:
+		pygame.quit()
+		sys.exit()
 
 	# Draws the background color
 	display.fill((0,0,0))
@@ -142,6 +151,7 @@ while game_is_running:
 	plyrspr.animate(plyrctrl, mid_width-12, mid_height-6)
 	x = plyrspr.offx
 	y = plyrspr.offy
+
 	display.blit(plyrspr.image, (mid_width-12+x, mid_height-6+y))
 
 	# Draws the Heads-Up-Display over everything
@@ -150,4 +160,4 @@ while game_is_running:
 	pygame.display.update()
 	game_clock.tick(fps)
 
-	#print (game_clock.get_fps())
+	#print(game_clock.get_fps())

@@ -13,7 +13,7 @@ class Kyle(PlayerController):
         super().__init__(x, y, lvl)
 
         self.is_sliding = False
-        self.slide_speed = 24
+        self.slide_speed = 12
         self.super_speed = 12
         self.can_slide = True
         self.is_super = 0
@@ -47,8 +47,7 @@ class Kyle(PlayerController):
         if self.in_control and self.on_land:
             if pressed_keys[K_DOWN]:
                 if pressed_keys[K_x] and self.can_slide:
-                    
-                    self.time_to_normal_state = 20
+                    self.time_to_normal_state = 100
                     self.in_control = False
                     self.is_sliding = True
                     self.can_slide = False
@@ -63,9 +62,10 @@ class Kyle(PlayerController):
         
         # Behaviour while sliding
         if self.is_sliding:
-            self.vel_x *= 0.875
+            self.vel_x *= 0.95
         
             if abs(self.vel_x) < 3:
+                self.time_to_normal_state = 10
                 self.is_sliding = False
                 self.action = "kneel"
                 self.vel_x = 0
